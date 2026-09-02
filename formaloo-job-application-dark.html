@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Job Application</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #080b10;
+      --panel: #10151d;
+      --panel-2: #151b24;
+      --border: #252d39;
+      --border-focus: #64748b;
+      --text: #f5f7fb;
+      --muted: #97a3b6;
+      --subtle: #6f7b8e;
+      --accent: #f8fafc;
+      --accent-text: #0b0f14;
+      --danger: #ff7b7b;
+      --success: #7be0aa;
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top, rgba(255,255,255,.045), transparent 30%),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .page {
+      width: min(100% - 32px, 760px);
+      margin: 0 auto;
+      padding: 72px 0;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      color: #c6cfdb;
+      font-size: 13px;
+      font-weight: 650;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #8bffb6;
+      box-shadow: 0 0 0 4px rgba(139,255,182,.1);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 7vw, 52px);
+      line-height: 1.02;
+      letter-spacing: -.04em;
+    }
+
+    .intro {
+      margin: 18px 0 34px;
+      max-width: 640px;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.65;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,.008)), var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 28px;
+      box-shadow: 0 24px 80px rgba(0,0,0,.32);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+    }
+
+    .field { min-width: 0; }
+    .field.full { grid-column: 1 / -1; }
+
+    label {
+      display: block;
+      margin-bottom: 9px;
+      font-size: 14px;
+      font-weight: 650;
+      color: #eef2f7;
+    }
+
+    .required { color: #ff9c9c; }
+
+    input,
+    select {
+      width: 100%;
+      min-height: 48px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--panel-2);
+      color: var(--text);
+      padding: 0 14px;
+      outline: none;
+      font: inherit;
+      transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+    }
+
+    input::placeholder { color: #616d7e; }
+
+    input:hover,
+    select:hover { border-color: #354052; }
+
+    input:focus,
+    select:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 4px rgba(148,163,184,.11);
+      background: #171e28;
+    }
+
+    .help {
+      margin-top: 8px;
+      color: var(--subtle);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .file-box {
+      position: relative;
+      border: 1px dashed #394455;
+      background: var(--panel-2);
+      border-radius: var(--radius);
+      min-height: 112px;
+      padding: 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: border-color .15s ease, background .15s ease;
+    }
+
+    .file-box:hover {
+      border-color: #536176;
+      background: #181f29;
+    }
+
+    .file-box input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      min-height: 100%;
+    }
+
+    .file-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: #202936;
+      border: 1px solid #2b3543;
+      flex: 0 0 auto;
+    }
+
+    .file-copy strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .file-copy span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .actions {
+      margin-top: 28px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    button {
+      appearance: none;
+      border: 0;
+      min-height: 50px;
+      padding: 0 22px;
+      border-radius: 14px;
+      background: var(--accent);
+      color: var(--accent-text);
+      font: inherit;
+      font-weight: 750;
+      cursor: pointer;
+      transition: transform .15s ease, opacity .15s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:disabled { opacity: .55; cursor: wait; transform: none; }
+
+    .status {
+      min-height: 22px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .status.error { color: var(--danger); }
+    .status.success { color: var(--success); }
+
+    .success-card {
+      display: none;
+      padding: 42px 28px;
+      text-align: center;
+    }
+
+    .success-icon {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 18px;
+      background: rgba(123,224,170,.1);
+      border: 1px solid rgba(123,224,170,.25);
+      font-size: 26px;
+    }
+
+    .success-card h2 {
+      margin: 0 0 10px;
+      font-size: 28px;
+      letter-spacing: -.025em;
+    }
+
+    .success-card p {
+      margin: 0 auto;
+      max-width: 520px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    @media (max-width: 640px) {
+      .page { width: min(100% - 22px, 760px); padding: 34px 0; }
+      .card { padding: 20px; border-radius: 18px; }
+      .grid { grid-template-columns: 1fr; gap: 18px; }
+      .field.full { grid-column: auto; }
+      .actions { align-items: stretch; flex-direction: column; }
+      button { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div id="formView">
+      <div class="eyebrow">We’re hiring</div>
+      <h1>Job Application</h1>
+      <p class="intro">Please complete the application form below to apply for the open position.</p>
+
+      <form id="applicationForm" class="card" novalidate>
+        <div class="grid">
+          <div class="field full">
+            <label for="applicant_name">Applicant Name <span class="required">*</span></label>
+            <input id="applicant_name" name="applicant_name" type="text" maxlength="255" autocomplete="name" placeholder="Your full name" required />
+            <div class="help">Enter your full name.</div>
+          </div>
+
+          <div class="field">
+            <label for="phone_number">Phone Number <span class="required">*</span></label>
+            <input id="phone_number" name="phone_number" type="tel" autocomplete="tel" placeholder="+1 555 123 4567" required />
+            <div class="help">Enter your primary phone number.</div>
+          </div>
+
+          <div class="field">
+            <label for="email">Email <span class="required">*</span></label>
+            <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required />
+            <div class="help">Enter your email address.</div>
+          </div>
+
+          <div class="field full">
+            <label for="linkedin_profile">LinkedIn Profile</label>
+            <input id="linkedin_profile" name="linkedin_profile" type="url" placeholder="https://linkedin.com/in/yourname" />
+            <div class="help">Provide a link to your LinkedIn profile.</div>
+          </div>
+
+          <div class="field">
+            <label for="years_of_experience">Years of Experience <span class="required">*</span></label>
+            <input id="years_of_experience" name="years_of_experience" type="number" min="0" step="1" inputmode="numeric" placeholder="5" required />
+            <div class="help">Total years of professional experience.</div>
+          </div>
+
+          <div class="field">
+            <label for="task_status">Application Status</label>
+            <select id="task_status" name="task_status">
+              <option value="zustvko8">Active</option>
+              <option value="WtsQMzCr" selected>Pending</option>
+              <option value="Lkuwx9wZ">Pre-screening Process</option>
+              <option value="RogGSj3H">No-show</option>
+              <option value="uvl9wNoc">Rescheduled</option>
+              <option value="MHIVB8nc">Cancelled</option>
+              <option value="moVFVKev">Archive</option>
+            </select>
+          </div>
+
+          <div class="field full">
+            <label>Resume <span class="required">*</span></label>
+            <div class="file-box" id="fileBox">
+              <div class="file-icon" aria-hidden="true">↑</div>
+              <div class="file-copy">
+                <strong id="fileTitle">Upload your resume</strong>
+                <span id="fileMeta">PDF, DOC or DOCX · up to 2 MB</span>
+              </div>
+              <input id="resume" name="resume" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required />
+            </div>
+            <div class="help">Your file is uploaded securely before the application is submitted.</div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button id="submitButton" type="submit">Submit application</button>
+          <div id="status" class="status" aria-live="polite"></div>
+        </div>
+      </form>
+    </div>
+
+    <section id="successView" class="card success-card">
+      <div class="success-icon">✓</div>
+      <h2>Application submitted</h2>
+      <p>Thank you! Your job application has been successfully submitted. We will review your information and get back to you soon.</p>
+    </section>
+  </main>
+
+  <script>
+    const API_BASE = "https://api.formaloo.me";
+    const SUBMIT_URL = "https://api.formaloo.me/v3.0/form-displays/slug/YHGrVX9j/submit/";
+
+    // IMPORTANT: this value is exposed to anyone who can view your website source.
+    // For a public production website, replace this setup with a publish-safe credential strategy.
+    const API_KEY = "key_gAAAAABl8xQQvFBSw1RUpwAcObJAskn03iDaklG9H25NbHLDrWxQAkGmq3lzpa2TDQn9iMRUhqgwSDzvO_Hn5P0eSf13cM1THwSdsmlrvPyZq0LV73l4Wm6ofizlfPE2W1aF65YYbin28OUghWF5Pjp7Pl-fqjZiNQ==";
+
+    const FIELD_SLUGS = {
+      task_status: "oLkdA4Gg",
+      applicant_name: "8hiaa6U4",
+      phone_number: "u4BUL5My",
+      email: "ESS2VCqg",
+      linkedin_profile: "h3TvqaXN",
+      years_of_experience: "SPBXVUdp",
+      resume: "AYThYIha"
+    };
+
+    const form = document.getElementById("applicationForm");
+    const submitButton = document.getElementById("submitButton");
+    const statusEl = document.getElementById("status");
+    const resumeInput = document.getElementById("resume");
+    const fileTitle = document.getElementById("fileTitle");
+    const fileMeta = document.getElementById("fileMeta");
+
+    let uploadedResumeSlug = null;
+    let resumeUploadPromise = null;
+
+    function headers(extra = {}) {
+      return {
+        Accept: "application/json",
+        "x-api-key": API_KEY,
+        ...extra
+      };
+    }
+
+    function setStatus(message, type = "") {
+      statusEl.textContent = message;
+      statusEl.className = `status ${type}`.trim();
+    }
+
+    function extractFileSlug(json) {
+      return json?.data?.data?.file?.slug
+        ?? json?.data?.file?.slug
+        ?? json?.file?.slug
+        ?? null;
+    }
+
+    async function uploadResume(file) {
+      const maxBytes = 2048 * 1024;
+      if (file.size > maxBytes) {
+        throw new Error("Resume must be 2 MB or smaller.");
+      }
+
+      const allowed = ["pdf", "doc", "docx"];
+      const ext = (file.name.split(".").pop() || "").toLowerCase();
+      if (!allowed.includes(ext)) {
+        throw new Error("Please upload a PDF, DOC, or DOCX file.");
+      }
+
+      const data = new FormData();
+      data.append("file", file, file.name || "resume");
+
+      const url = new URL(`/v3.0/files/?id=${encodeURIComponent(FIELD_SLUGS.resume)}`, API_BASE + "/");
+      const response = await fetch(url, {
+        method: "POST",
+        credentials: "omit",
+        headers: headers(),
+        body: data
+      });
+
+      let json = null;
+      try { json = await response.json(); } catch (_) {}
+
+      if (!response.ok) {
+        throw new Error(json?.message || json?.detail || "Resume upload failed.");
+      }
+
+      const slug = extractFileSlug(json);
+      if (!slug) throw new Error("Resume uploaded, but no file reference was returned.");
+      return slug;
+    }
+
+    resumeInput.addEventListener("change", () => {
+      uploadedResumeSlug = null;
+      const file = resumeInput.files?.[0];
+
+      if (!file) {
+        fileTitle.textContent = "Upload your resume";
+        fileMeta.textContent = "PDF, DOC or DOCX · up to 2 MB";
+        return;
+      }
+
+      fileTitle.textContent = file.name;
+      fileMeta.textContent = `${(file.size / 1024 / 1024).toFixed(2)} MB · uploading…`;
+      setStatus("Uploading resume…");
+
+      resumeUploadPromise = uploadResume(file)
+        .then((slug) => {
+          uploadedResumeSlug = slug;
+          fileMeta.textContent = `${(file.size / 1024 / 1024).toFixed(2)} MB · uploaded`;
+          setStatus("Resume ready.", "success");
+          return slug;
+        })
+        .catch((error) => {
+          uploadedResumeSlug = null;
+          fileMeta.textContent = "Upload failed · choose a file to retry";
+          setStatus(error.message || "Resume upload failed.", "error");
+          throw error;
+        });
+    });
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      setStatus("");
+
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      submitButton.disabled = true;
+      submitButton.textContent = "Submitting…";
+
+      try {
+        const file = resumeInput.files?.[0];
+        if (!file) throw new Error("Please upload your resume.");
+
+        if (!uploadedResumeSlug) {
+          if (!resumeUploadPromise) resumeUploadPromise = uploadResume(file);
+          uploadedResumeSlug = await resumeUploadPromise;
+        }
+
+        const values = {
+          task_status: document.getElementById("task_status").value,
+          applicant_name: document.getElementById("applicant_name").value.trim(),
+          phone_number: document.getElementById("phone_number").value.trim(),
+          email: document.getElementById("email").value.trim(),
+          linkedin_profile: document.getElementById("linkedin_profile").value.trim(),
+          years_of_experience: Number(document.getElementById("years_of_experience").value),
+          resume: uploadedResumeSlug
+        };
+
+        const body = {};
+        for (const [alias, slug] of Object.entries(FIELD_SLUGS)) {
+          const value = values[alias];
+          if (value === undefined || value === null || value === "") continue;
+          body[slug] = value;
+        }
+
+        body.submitter_referer_address = document.referrer || window.location.href;
+
+        const response = await fetch(SUBMIT_URL, {
+          method: "POST",
+          credentials: "omit",
+          headers: headers({ "Content-Type": "application/json" }),
+          body: JSON.stringify(body)
+        });
+
+        let json = null;
+        try { json = await response.json(); } catch (_) {}
+
+        if (!response.ok) {
+          const formErrors = json?.errors?.form_errors;
+          if (formErrors && typeof formErrors === "object") {
+            const first = Object.values(formErrors).flat().find(Boolean);
+            throw new Error(String(first || "Please check the form and try again."));
+          }
+          throw new Error(json?.message || json?.detail || "Could not submit your application.");
+        }
+
+        document.getElementById("formView").style.display = "none";
+        document.getElementById("successView").style.display = "block";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } catch (error) {
+        setStatus(error.message || "Something went wrong. Please try again.", "error");
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = "Submit application";
+      }
+    });
+  </script>
+</body>
+</html>
